@@ -1,95 +1,78 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}User Feedback - BookApp{% endblock %}
+{% block title %}Feedback Utilisateurs - BookApp{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <!-- Header Card -->
-            <div class="card shadow mb-4">
-                <div class="card-header bg-primary text-white py-3">
-                    <h4 class="m-0 font-weight-bold">
-                        <i class="fas fa-comment-alt mr-2"></i>
-                        User Feedback
-                    </h4>
+        <div class="col-lg-9">
+            <!-- Header -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white border-0 py-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h1 class="h4 mb-0 font-weight-600">
+                            <i class="fas fa-comments text-primary mr-2"></i>
+                            Feedback Utilisateurs
+                        </h1>
+                        <span class="badge badge-pill badge-light border">{{ feedbacks|length }} message(s)</span>
+                    </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body pt-0">
                     <p class="text-muted mb-0">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        Review feedback submitted by users
+                        <i class="fas fa-info-circle text-primary mr-1"></i>
+                        Consultez et répondez aux retours des utilisateurs
                     </p>
                 </div>
             </div>
 
             <!-- Feedback List -->
             {% if feedbacks %}
-            <div class="card shadow mb-4">
+            <div class="card shadow-sm border-0">
                 <div class="card-body p-0">
                     <div class="list-group list-group-flush">
                         {% for feedback in feedbacks %}
-                        <div class="list-group-item">
+                        <div class="list-group-item border-0 px-4 py-3" id="feedback-{{ feedback.id }}">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div>
-                                    <h6 class="mb-1 font-weight-bold">
-                                        <i class="fas fa-user mr-2 text-primary"></i>
-                                        {{ feedback.user.username }}
-                                    </h6>
-                                    <small class="text-muted">
-                                        <i class="far fa-clock mr-1"></i>
-                                        {{ feedback.created_at|date:"M d, Y H:i" }}
-                                    </small>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar avatar-sm bg-light-primary rounded-circle mr-3">
+                                        <span class="avatar-text">{{ feedback.user.username|first|upper }}</span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 font-weight-600">{{ feedback.user.username }}</h6>
+                                        <small class="text-muted">
+                                            <i class="far fa-clock mr-1"></i>
+                                            {{ feedback.created_at|date:"d/m/Y H:i" }}
+                                        </small>
+                                    </div>
                                 </div>
-                                <span class="badge badge-{% if feedback.is_urgent %}danger{% else %}info{% endif %}">
-                                    {% if feedback.is_urgent %}URGENT{% else %}Normal{% endif %}
+                                <span class="badge badge-{% if feedback.is_urgent %}danger{% else %}light-primary{% endif %} badge-pill">
+                                    {% if feedback.is_urgent %}<i class="fas fa-exclamation-circle mr-1"></i>URGENT{% else %}Standard{% endif %}
                                 </span>
                             </div>
-                            <div class="feedback-content p-3 bg-light rounded">
-                                <p class="mb-0">{{ feedback.feedback }}</p>
-                            </div>
-                            {% if feedback.response %}
-                            <div class="admin-response mt-3 p-3 bg-light rounded border-left border-primary">
-                                <h6 class="font-weight-bold text-primary mb-2">
-                                    <i class="fas fa-reply mr-1"></i> Your Response
-                                </h6>
-                                <p class="mb-0">{{ feedback.response }}</p>
-                            </div>
-                            {% else %}
-                            <button class="btn btn-sm btn-outline-primary mt-3" data-toggle="modal" data-target="#responseModal{{ feedback.id }}">
-                                <i class="fas fa-reply mr-1"></i> Respond
-                            </button>
-                            {% endif %}
-                        </div>
-
-                        <!-- Response Modal -->
-                        <div class="modal fade" id="responseModal{{ feedback.id }}" tabindex="-1" role="dialog" aria-labelledby="responseModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="responseModalLabel">Respond to Feedback</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <form method="post" action="{% url 'respond_feedback' feedback.id %}">
-                                        {% csrf_token %}
-                                        <div class="modal-body">
-                                            <div class="form-group">
-                                                <label>Original Feedback:</label>
-                                                <div class="p-2 bg-light rounded">{{ feedback.feedback }}</div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="responseText">Your Response:</label>
-                                                <textarea class="form-control" id="responseText" name="response" rows="4" required></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Send Response</button>
-                                        </div>
-                                    </form>
+                            
+                            <div class="pl-5 mt-3">
+                                <div class="feedback-content p-3 bg-light rounded-lg">
+                                    <p class="mb-0">{{ feedback.feedback }}</p>
                                 </div>
+                                
+                                {% if feedback.response %}
+                                <div class="admin-response mt-3 p-3 bg-primary-50 rounded-lg border-start border-primary border-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="font-weight-600 text-primary mb-0">
+                                            <i class="fas fa-reply mr-1"></i> Votre réponse
+                                        </h6>
+                                        <small class="text-muted">{{ feedback.responded_at|date:"d/m/Y H:i" }}</small>
+                                    </div>
+                                    <p class="mb-0">{{ feedback.response }}</p>
+                                </div>
+                                {% else %}
+                                <button class="btn btn-sm btn-outline-primary mt-3 response-btn" 
+                                        data-feedback-id="{{ feedback.id }}"
+                                        data-feedback-text="{{ feedback.feedback|escape }}">
+                                    <i class="fas fa-reply mr-1"></i> Répondre
+                                </button>
+                                {% endif %}
                             </div>
                         </div>
                         {% endfor %}
@@ -97,11 +80,13 @@
                 </div>
             </div>
             {% else %}
-            <div class="card shadow text-center py-5">
+            <div class="card shadow-sm border-0 text-center py-5">
                 <div class="card-body">
-                    <i class="fas fa-inbox fa-4x text-muted mb-4"></i>
-                    <h4 class="text-muted">No Feedback Received</h4>
-                    <p class="text-muted">Users haven't submitted any feedback yet</p>
+                    <div class="empty-state-icon mb-4">
+                        <i class="fas fa-comment-slash text-muted opacity-20" style="font-size: 5rem;"></i>
+                    </div>
+                    <h4 class="text-muted font-weight-600 mb-3">Aucun feedback</h4>
+                    <p class="text-muted mb-4">Aucun retour utilisateur n'a été soumis pour le moment</p>
                 </div>
             </div>
             {% endif %}
@@ -109,42 +94,187 @@
     </div>
 </div>
 
+<!-- Response Modal -->
+<div class="modal fade" id="responseModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0">
+                <h5 class="modal-title font-weight-600">Réponse au feedback</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="responseForm">
+                {% csrf_token %}
+                <input type="hidden" id="feedbackId" name="feedback_id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="font-weight-600">Message original :</label>
+                        <div class="p-3 bg-light rounded-lg mb-3" id="original-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="responseText" class="font-weight-600">Votre réponse :</label>
+                        <textarea class="form-control border-2" id="responseText" name="response" rows="5" placeholder="Saisissez votre réponse ici..." required></textarea>
+                        <div class="invalid-feedback">Veuillez saisir une réponse.</div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary" id="submit-response">
+                        <i class="fas fa-paper-plane mr-1"></i> Envoyer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <style>
     .card {
-        border: none;
-        border-radius: 0.5rem;
+        border-radius: 12px;
+        overflow: hidden;
     }
     
-    .card-header {
-        border-bottom: 1px solid rgba(255,255,255,0.1);
+    .avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
     }
     
-    .list-group-item {
-        border-left: none;
-        border-right: none;
-        padding: 1.5rem;
+    .avatar-text {
+        font-weight: 600;
+        color: #4e73df;
     }
     
     .feedback-content {
         border-left: 3px solid #4e73df;
+        background-color: #f8f9fe;
     }
     
     .admin-response {
-        background-color: #f8f9fc !important;
+        background-color: #f0f5ff !important;
     }
     
-    .badge-danger {
-        background-color: #e74a3b;
+    .badge-light-primary {
+        background-color: #e0e7ff;
+        color: #4e73df;
     }
     
-    .badge-info {
-        background-color: #36b9cc;
+    .rounded-lg {
+        border-radius: 10px;
     }
     
-    .empty-state-icon {
-        font-size: 5rem;
-        opacity: 0.2;
+    .modal-content {
+        border-radius: 12px;
+    }
+    
+    .form-control.border-2 {
+        border-width: 2px !important;
+    }
+    
+    .is-invalid {
+        border-color: #dc3545 !important;
     }
 </style>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle response button clicks
+    document.querySelectorAll('.response-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const feedbackId = this.getAttribute('data-feedback-id');
+            const feedbackText = this.getAttribute('data-feedback-text');
+            
+            document.getElementById('feedbackId').value = feedbackId;
+            document.getElementById('original-message').textContent = feedbackText;
+            document.getElementById('responseText').value = '';
+            
+            // Show modal
+            $('#responseModal').modal('show');
+        });
+    });
+    
+    // Handle form submission
+    document.getElementById('responseForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const responseText = document.getElementById('responseText');
+        const submitBtn = document.getElementById('submit-response');
+        
+        // Validate response
+        if (!responseText.value.trim()) {
+            responseText.classList.add('is-invalid');
+            return false;
+        }
+        
+        // Disable button during submission
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Envoi en cours...';
+        
+        // Prepare form data
+        const formData = new FormData(this);
+        
+        // Send AJAX request
+        fetch("{% url 'respond_feedback' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                feedback_id: formData.get('feedback_id'),
+                response: formData.get('response')
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Close modal
+                $('#responseModal').modal('hide');
+                
+                // Update the UI
+                const feedbackItem = document.getElementById(`feedback-${data.feedback_id}`);
+                const responseHtml = `
+                    <div class="admin-response mt-3 p-3 bg-primary-50 rounded-lg border-start border-primary border-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="font-weight-600 text-primary mb-0">
+                                <i class="fas fa-reply mr-1"></i> Votre réponse
+                            </h6>
+                            <small class="text-muted">${data.responded_at}</small>
+                        </div>
+                        <p class="mb-0">${data.response}</p>
+                    </div>
+                `;
+                
+                // Remove the response button
+                const buttonContainer = feedbackItem.querySelector('.pl-5');
+                const responseBtn = buttonContainer.querySelector('.response-btn');
+                if (responseBtn) {
+                    responseBtn.remove();
+                }
+                
+                // Add the response
+                buttonContainer.insertAdjacentHTML('beforeend', responseHtml);
+            } else {
+                alert('Error: ' + (data.error || 'Unknown error occurred'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane mr-1"></i> Envoyer';
+        });
+    });
+    
+    // Clear validation on input
+    document.getElementById('responseText').addEventListener('input', function() {
+        this.classList.remove('is-invalid');
+    });
+});
+</script>
 {% endblock %}

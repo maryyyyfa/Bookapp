@@ -1,78 +1,93 @@
-{% extends 'librarian/base.html' %} {% load static %} {% block title %}New
-Message | BookApp{% endblock %} {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="bg-white shadow rounded-lg overflow-hidden">
-    <div class="px-4 py-5 sm:px-6 bg-primary">
+{% extends 'librarian/base.html' %}
+{% load static %}
+
+{% block title %}Nouveau Message | BookApp{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="bg-white shadow-card rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+    <!-- En-tête avec dégradé -->
+    <div class="px-6 py-4 bg-gradient-to-r from-primary to-primary-dark">
       <div class="flex items-center">
-        <i class="fas fa-comment-alt text-white mr-2"></i>
-        <h3 class="text-lg font-medium text-white">New Message</h3>
+        <div class="bg-white p-2 rounded-lg mr-3">
+          <i class="fas fa-comment-alt text-primary text-xl"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-white">Nouveau Message</h3>
       </div>
     </div>
 
-    <div class="px-4 py-5 sm:p-6">
+    <!-- Formulaire -->
+    <div class="px-6 py-6">
       <form method="POST" class="space-y-6">
         {% csrf_token %}
 
+        <!-- Champ de message -->
         <div>
-          <label
-            for="id_content"
-            class="block text-sm font-medium text-gray-700"
-            >Message</label
-          >
-          <div class="mt-1">
+          <label for="id_content" class="block text-sm font-medium text-gray-700 mb-2">
+            Votre message
+          </label>
+          <div class="mt-1 relative rounded-md shadow-sm">
             <textarea
               id="id_content"
               name="content"
-              rows="4"
+              rows="6"
               required
-              class="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
-              placeholder="Type your message here..."
+              class="input-focus block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder-gray-400"
+              placeholder="Écrivez votre message ici..."
             ></textarea>
+            <div class="absolute bottom-3 right-3 flex items-center">
+              <span class="text-xs text-gray-500">
+                <span id="char-count">0</span>/500
+              </span>
+            </div>
           </div>
         </div>
 
-        <div class="flex justify-end space-x-3">
+        <!-- Boutons -->
+        <div class="flex justify-end space-x-4 pt-4">
           <a
             href="{% url 'llchat' %}"
-            class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            class="btn-secondary inline-flex items-center"
           >
             <i class="fas fa-times mr-2"></i>
-            Cancel
+            Annuler
           </a>
           <button
             type="submit"
-            class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            class="btn-primary inline-flex items-center"
           >
             <i class="fas fa-paper-plane mr-2"></i>
-            Send Message
+            Envoyer
           </button>
         </div>
       </form>
     </div>
   </div>
 </div>
-{% endblock %} {% block javascripts %} {{ block.super }}
-<script>
-  // Auto-scroll to bottom of chat messages
-  const messagesContainer = document.querySelector(".chat-messages");
-  if (messagesContainer) {
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-  }
+{% endblock %}
 
-  // Refresh messages every 5 seconds
-  setInterval(function () {
-    fetch(window.location.href)
-      .then((response) => response.text())
-      .then((html) => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
-        const newMessages = doc.querySelector(".chat-messages");
-        if (newMessages && document.querySelector(".chat-messages")) {
-          document.querySelector(".chat-messages").innerHTML =
-            newMessages.innerHTML;
-          messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-      });
-  }, 5000);
+{% block javascripts %}
+{{ block.super }}
+<script>
+  // Compteur de caractères
+  const textarea = document.getElementById('id_content');
+  const charCount = document.getElementById('char-count');
+  
+  textarea.addEventListener('input', function() {
+    charCount.textContent = this.value.length;
+    
+    if (this.value.length > 500) {
+      charCount.classList.add('text-red-500');
+      charCount.classList.remove('text-gray-500');
+    } else {
+      charCount.classList.remove('text-red-500');
+      charCount.classList.add('text-gray-500');
+    }
+  });
+
+  // Auto-focus sur le champ de message
+  document.addEventListener('DOMContentLoaded', function() {
+    textarea.focus();
+  });
 </script>
 {% endblock %}

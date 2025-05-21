@@ -1,61 +1,177 @@
-{% extends 'publisher/base.html' %} {% load static %} {% block title %}About Us
-| BookApp{% endblock %} {% block content %}
-<div class="container mx-auto px-4 py-8">
-  <div class="max-w-4xl mx-auto">
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-      <!-- Header -->
-      <div class="bg-primary text-white px-6 py-4">
-        <h1 class="text-2xl font-bold text-center">About Us</h1>
-      </div>
+{% extends 'publisher/base.html' %}
+{% load static %}
 
-      <!-- Content -->
-      <div class="p-6 space-y-6">
-        <div class="text-center">
-          <img
-            src="{% static 'images/logo.png' %}"
-            alt="BookApp Logo"
-            class="w-32 h-32 mx-auto mb-4"
-          />
-          <h2 class="text-xl font-semibold text-gray-800">
-            Welcome to BookApp
-          </h2>
-          <p class="text-gray-600 mt-2">
-            Your Digital Library Management Solution
+{% block title %}À Propos | BookApp{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+  <!-- En-tête avec logo -->
+  <div class="text-center mb-16">
+    <div class="mx-auto mb-8 w-32 h-32 rounded-full bg-white p-2 shadow-lg flex items-center justify-center">
+      <img src="{% static 'images/a.jpg' %}" 
+           alt="Logo BookApp" 
+           class="w-full h-full object-contain rounded-full"
+           loading="lazy">
+    </div>
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">BookApp</h1>
+    <div class="w-24 h-1 bg-primary mx-auto mb-6"></div>
+    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+      Votre partenaire pour une gestion littéraire innovante
+    </p>
+  </div>
+
+  <!-- Section Principale -->
+  <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+    <!-- Section Notre Histoire -->
+    <div class="p-12 border-b border-gray-100">
+      <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+        <i class="fas fa-history text-primary mr-3"></i>
+        Notre Histoire
+      </h2>
+      <div class="prose-lg text-gray-600 max-w-3xl mx-auto">
+        <p>
+          Fondée en 2025, BookApp est née de la passion commune de son équipe pour la littérature et la technologie.
+          Notre plateforme a été conçue pour répondre aux besoins croissants des professionnels du livre dans
+          un environnement digital en constante évolution.
+        </p>
+        <p class="mt-4">
+          Aujourd'hui, nous accompagnons plus de 500 éditeurs et bibliothèques dans la gestion optimisée
+          de leur catalogue littéraire.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section Valeurs -->
+    <div class="p-12 bg-gray-50">
+      <h2 class="text-3xl font-bold text-gray-800 mb-12 text-center">
+        <i class="fas fa-gem text-primary mr-3"></i>
+        Nos Valeurs Fondamentales
+      </h2>
+      
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Innovation -->
+        <div class="text-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          <div class="text-primary text-4xl mb-4">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Innovation</h3>
+          <p class="text-gray-600">
+            Nous repoussons constamment les limites technologiques pour offrir des solutions avant-gardistes.
           </p>
         </div>
-
-        <div class="prose max-w-none">
-          <p class="text-gray-700">
-            BookApp is a modern online library management system designed to
-            make book management and sharing easier than ever. Our platform
-            provides a seamless experience for publishers, readers, and book
-            enthusiasts.
+        
+        <!-- Qualité -->
+        <div class="text-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          <div class="text-primary text-4xl mb-4">
+            <i class="fas fa-award"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Qualité</h3>
+          <p class="text-gray-600">
+            Un engagement inébranlable envers l'excellence dans chaque aspect de notre plateforme.
           </p>
-
-          <h3 class="text-lg font-semibold text-gray-800 mt-6">Our Mission</h3>
-          <p class="text-gray-700">
-            To revolutionize the way books are managed and shared in the digital
-            age, making literature accessible to everyone while providing
-            powerful tools for publishers and readers to connect.
-          </p>
-
-          <h3 class="text-lg font-semibold text-gray-800 mt-6">Key Features</h3>
-          <ul class="list-disc list-inside text-gray-700 space-y-2">
-            <li>Easy book management and organization</li>
-            <li>Secure file sharing and storage</li>
-            <li>Real-time chat and communication</li>
-            <li>User-friendly interface</li>
-            <li>Advanced search capabilities</li>
-          </ul>
-
-          <h3 class="text-lg font-semibold text-gray-800 mt-6">Contact Us</h3>
-          <p class="text-gray-700">
-            Have questions or suggestions? We'd love to hear from you! Use our
-            feedback form or reach out to our support team.
+        </div>
+        
+        <!-- Communauté -->
+        <div class="text-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          <div class="text-primary text-4xl mb-4">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Communauté</h3>
+          <p class="text-gray-600">
+            Nous bâtissons des ponts entre les acteurs du monde littéraire.
           </p>
         </div>
       </div>
     </div>
+
+    <!-- Section Fonctionnalités -->
+    <div class="p-12">
+      <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+        <i class="fas fa-cogs text-primary mr-3"></i>
+        Nos Solutions Clés
+      </h2>
+      
+      <div class="max-w-4xl mx-auto">
+        <div class="space-y-6">
+          <!-- Gestion de Catalogue -->
+          <div class="flex items-start">
+            <div class="bg-primary/10 p-3 rounded-lg mr-6">
+              <i class="fas fa-book-open text-primary text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-800 mb-2">Gestion de Catalogue Avancée</h3>
+              <p class="text-gray-600">
+                Un système complet pour organiser, suivre et analyser votre collection de livres avec des outils
+                de reporting puissants.
+              </p>
+            </div>
+          </div>
+          
+          <!-- Collaboration -->
+          <div class="flex items-start">
+            <div class="bg-primary/10 p-3 rounded-lg mr-6">
+              <i class="fas fa-comments text-primary text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-800 mb-2">Espace de Collaboration</h3>
+              <p class="text-gray-600">
+                Des outils de communication intégrés pour faciliter le travail d'équipe entre éditeurs,
+                auteurs et correcteurs.
+              </p>
+            </div>
+          </div>
+          
+          <!-- Sécurité -->
+          <div class="flex items-start">
+            <div class="bg-primary/10 p-3 rounded-lg mr-6">
+              <i class="fas fa-lock text-primary text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-800 mb-2">Sécurité Renforcée</h3>
+              <p class="text-gray-600">
+                Protocoles de sécurité avancés pour protéger vos précieux contenus littéraires.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Final -->
+  <div class="text-center mt-16">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Prêt à révolutionner votre gestion littéraire ?</h2>
+    <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+      Rejoignez les professionnels qui nous font déjà confiance.
+    </p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="#" class="px-8 py-4 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-all shadow-lg hover:shadow-xl">
+        <i class="fas fa-play mr-3"></i> Démarrer l'essai gratuit
+      </a>
+      <a href="#" class="px-8 py-4 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary/10 transition-all">
+        <i class="fas fa-phone-alt mr-3"></i> Contact commercial
+      </a>
+    </div>
   </div>
 </div>
+
+<style>
+  :root {
+    --primary: #4e73df;
+    --primary-dark: #2e59d9;
+  }
+  
+  .shadow-xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .transition-all {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .prose-lg p {
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+  }
+</style>
 {% endblock %}

@@ -1,131 +1,109 @@
-{% extends 'librarian/base.html' %} {% load static %} {% block content %}
+{% extends 'librarian/base.html' %} 
+{% load static %} 
+{% block title %}Livres Récemment Ajoutés | BookApp{% endblock %} 
+
+{% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="bg-white shadow rounded-lg overflow-hidden">
-    <div class="px-4 py-5 sm:px-6 bg-primary">
+  <div class="bg-white shadow-card rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+    <!-- En-tête avec dégradé -->
+    <div class="px-6 py-4 bg-gradient-to-r from-primary to-primary-dark">
       <div class="flex items-center">
-        <i class="fas fa-book-open text-white mr-2"></i>
-        <h3 class="text-lg font-medium text-white">Recently Added Books</h3>
+        <div class="bg-white p-2 rounded-lg mr-3">
+          <i class="fas fa-book-open text-primary text-xl"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-white">Livres Récemment Ajoutés</h3>
       </div>
     </div>
 
-    <div class="px-4 py-5 sm:p-6">
+    <!-- Messages -->
+    <div class="px-6 pt-4">
       {% for message in messages %}
-      <div
-        class="mb-4 p-4 rounded-md {% if message.tags == 'success' %}bg-green-50 text-green-700{% elif message.tags == 'error' %}bg-red-50 text-red-700{% else %}bg-blue-50 text-blue-700{% endif %}"
-      >
-        <div class="flex">
-          <div class="flex-1">{{ message }}</div>
-          <button
-            type="button"
-            class="ml-4 text-gray-400 hover:text-gray-500"
-            onclick="this.parentElement.parentElement.remove()"
-          >
+      <div class="mb-4 p-4 rounded-lg border-l-4 {% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-700{% elif message.tags == 'error' %}bg-red-50 border-red-500 text-red-700{% else %}bg-blue-50 border-blue-500 text-blue-700{% endif %}">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+            <span>{{ message }}</span>
+          </div>
+          <button type="button" class="text-gray-500 hover:text-gray-700" onclick="this.parentElement.parentElement.remove()">
             <i class="fas fa-times"></i>
           </button>
         </div>
       </div>
       {% endfor %}
+    </div>
 
-      <div class="overflow-x-auto">
+    <!-- Tableau -->
+    <div class="px-6 pb-6">
+      <div class="overflow-x-auto rounded-lg border border-gray-200">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 ID
               </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Cover
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Couverture
               </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Title
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Titre
               </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Author
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Auteur
               </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            {% if books %} {% for book in books %}
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ book.id }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                {% if book.cover %}
-                <img
-                  src="{{ book.cover.url }}"
-                  alt="{{ book.title }}"
-                  class="h-24 w-16 object-cover rounded"
-                />
-                {% else %}
-                <div
-                  class="h-24 w-16 flex flex-col items-center justify-center bg-gray-100 rounded"
-                >
-                  <i class="fas fa-image text-gray-400 text-xl"></i>
-                  <span class="text-xs text-gray-500 mt-1">No cover</span>
-                </div>
-                {% endif %}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ book.title }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ book.author|default:"-" }}
-              </td>
-              <td
-                class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium"
-              >
-                {% if book.pdf %}
-                <div class="flex justify-center space-x-2">
-                  <a
-                    href="{{ book.pdf.url }}"
-                    target="_blank"
-                    class="text-primary hover:text-primary-dark"
-                    title="Read"
-                  >
-                    <i class="fas fa-eye"></i>
-                  </a>
-                  <a
-                    href="{{ book.pdf.url }}"
-                    download
-                    class="text-green-600 hover:text-green-700"
-                    title="Download"
-                  >
-                    <i class="fas fa-download"></i>
-                  </a>
-                </div>
-                {% else %}
-                <span class="text-gray-400">No PDF</span>
-                {% endif %}
-              </td>
-            </tr>
-            {% endfor %} {% else %}
-            <tr>
-              <td
-                colspan="5"
-                class="px-6 py-4 text-center text-sm text-gray-500"
-              >
-                No books available
-              </td>
-            </tr>
+            {% if books %} 
+              {% for book in books %}
+              <tr class="hover:bg-primary-light transition-colors duration-150">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {{ book.id }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  {% if book.cover %}
+                  <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="h-24 w-16 object-cover rounded-lg shadow-sm">
+                  {% else %}
+                  <div class="h-24 w-16 flex flex-col items-center justify-center bg-gray-100 rounded-lg">
+                    <i class="fas fa-image text-gray-400 text-xl"></i>
+                    <span class="text-xs text-gray-500 mt-1">Pas de couverture</span>
+                  </div>
+                  {% endif %}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ book.title }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ book.author|default:"-" }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                  {% if book.pdf %}
+                  <div class="flex justify-center space-x-3">
+                    <a href="{{ book.pdf.url }}" target="_blank" 
+                       class="text-primary hover:text-primary-dark transition-colors" 
+                       title="Lire">
+                      <i class="fas fa-eye text-lg"></i>
+                    </a>
+                    <a href="{{ book.pdf.url }}" download 
+                       class="text-green-600 hover:text-green-700 transition-colors" 
+                       title="Télécharger">
+                      <i class="fas fa-download text-lg"></i>
+                    </a>
+                  </div>
+                  {% else %}
+                  <span class="text-gray-400">Pas de PDF</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %} 
+            {% else %}
+              <tr>
+                <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                  Aucun livre disponible
+                </td>
+              </tr>
             {% endif %}
           </tbody>
         </table>
@@ -133,12 +111,17 @@
     </div>
   </div>
 </div>
-{% endblock %} {% block javascripts %} {{ block.super }}
+{% endblock %} 
+
+{% block javascripts %} 
+{{ block.super }}
 <script>
-  // Auto-dismiss alerts after 5 seconds
-  document.querySelectorAll(".alert").forEach((alert) => {
+  // Auto-dismiss alerts after 5 seconds with fade out
+  document.querySelectorAll("[class*='bg-']").forEach((alert) => {
     setTimeout(() => {
-      alert.remove();
+      alert.style.transition = 'opacity 0.5s ease';
+      alert.style.opacity = '0';
+      setTimeout(() => alert.remove(), 500);
     }, 5000);
   });
 </script>

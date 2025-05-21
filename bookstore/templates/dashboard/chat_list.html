@@ -1,30 +1,30 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Group Chat - BookApp{% endblock %}
+{% block title %}Discussion de Groupe - BookApp{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-10">
-            <div class="card shadow-lg my-4">
+            <div class="card shadow-lg my-4 border-0">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h4 class="m-0">
-                        <i class="fas fa-comments mr-2"></i>Group Chat
+                        <i class="fas fa-comments mr-2"></i>Discussion de Groupe
                     </h4>
                     <div>
                         <a href="{% url 'acchat' %}" class="btn btn-sm btn-light">
-                            <i class="fas fa-plus mr-1"></i> New Message
+                            <i class="fas fa-plus mr-1"></i> Nouveau Message
                         </a>
                         <a href="{% url 'alchat' %}" class="btn btn-sm btn-light ml-2">
-                            <i class="fas fa-sync-alt mr-1"></i> Refresh
+                            <i class="fas fa-sync-alt mr-1"></i> Actualiser
                         </a>
                     </div>
                 </div>
                 
-                <div class="card-body">
-                    <!-- Chat Messages Container -->
-                    <div class="chat-container mb-4" style="max-height: 500px; overflow-y: auto;">
+                <div class="card-body p-0">
+                    <!-- Conteneur des messages -->
+                    <div class="chat-container mb-4" style="max-height: 500px; overflow-y: auto; background-color: #f8fafc;">
                         {% for chat in object_list %}
                         <div class="chat-message mb-4 p-3 rounded-lg {% if chat.user.is_superuser or chat.user.is_admin %}admin-message{% elif chat.user.is_librarian %}librarian-message{% else %}user-message{% endif %}">
                             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -34,15 +34,15 @@
                                         {{ chat.user }} (Admin)
                                     {% elif chat.user.is_librarian %}
                                         <i class="fas fa-book-reader text-danger mr-1"></i>
-                                        {{ chat.user }} (Librarian)
+                                        {{ chat.user }} (Bibliothécaire)
                                     {% else %}
                                         <i class="fas fa-user text-primary mr-1"></i>
-                                        {{ chat.user }} (Publisher)
+                                        {{ chat.user }} (Éditeur)
                                     {% endif %}
                                 </span>
                                 <small class="text-muted">
                                     <i class="far fa-clock mr-1"></i>
-                                    {{ chat.posted_at|timesince }} ago
+                                    Il y a {{ chat.posted_at|timesince }}
                                 </small>
                             </div>
                             <div class="chat-content pl-3">
@@ -52,22 +52,22 @@
                         {% empty %}
                         <div class="text-center py-5">
                             <i class="fas fa-comment-slash fa-3x text-muted mb-3"></i>
-                            <h5 class="text-muted">No messages yet</h5>
-                            <p class="text-muted">Be the first to post a message!</p>
+                            <h5 class="text-muted">Aucun message pour l'instant</h5>
+                            <p class="text-muted">Soyez le premier à envoyer un message !</p>
                             <a href="{% url 'acchat' %}" class="btn btn-primary mt-3">
-                                <i class="fas fa-plus mr-2"></i>Start Conversation
+                                <i class="fas fa-plus mr-2"></i>Commencer la discussion
                             </a>
                         </div>
                         {% endfor %}
                     </div>
                     
-                    <!-- Action Buttons -->
-                    <div class="d-flex justify-content-between">
+                    <!-- Boutons d'action -->
+                    <div class="d-flex justify-content-between p-3 bg-light rounded-bottom">
                         <a href="{% url 'alchat' %}" class="btn btn-outline-primary">
-                            <i class="fas fa-sync-alt mr-2"></i>Refresh Chat
+                            <i class="fas fa-sync-alt mr-2"></i>Actualiser
                         </a>
-                        <a href="{% url 'acchat' %}" class="btn btn-primary">
-                            <i class="fas fa-pen mr-2"></i>New Message
+                        <a href="{% url 'acchat' %}" class="btn btn-primary shadow-sm">
+                            <i class="fas fa-pen mr-2"></i>Nouveau Message
                         </a>
                     </div>
                 </div>
@@ -78,64 +78,100 @@
 
 <style>
     .chat-container {
-        background-color: #f8f9fa;
+        background-color: #f8fafc;
         border-radius: 8px;
-        padding: 15px;
+        padding: 20px;
+        scroll-behavior: smooth;
     }
     
     .chat-message {
         background-color: white;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 15px rgba(0,0,0,0.03);
         border-left: 4px solid;
+        transition: all 0.3s ease;
+    }
+    
+    .chat-message:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     }
     
     .admin-message {
         border-left-color: #28a745;
+        background-color: rgba(40, 167, 69, 0.03);
     }
     
     .librarian-message {
         border-left-color: #dc3545;
+        background-color: rgba(220, 53, 69, 0.03);
     }
     
     .user-message {
         border-left-color: #007bff;
+        background-color: rgba(0, 123, 255, 0.03);
     }
     
     .chat-content {
         white-space: pre-wrap;
+        line-height: 1.6;
     }
     
     .card {
-        border: none;
-        border-radius: 0.5rem;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        padding: 1.25rem 1.5rem;
     }
     
     .btn-light {
         background-color: rgba(255,255,255,0.2);
         color: white;
         border: none;
+        transition: all 0.2s ease;
     }
     
     .btn-light:hover {
         background-color: rgba(255,255,255,0.3);
-        color: white;
+        transform: translateY(-1px);
+    }
+    
+    .btn-primary {
+        box-shadow: 0 2px 10px rgba(0, 123, 255, 0.2);
+    }
+    
+    .btn-outline-primary:hover {
+        box-shadow: 0 2px 10px rgba(0, 123, 255, 0.1);
     }
 </style>
 
 <script>
-// Auto-scroll to bottom of chat
+// Défilement automatique vers le bas
 function scrollToBottom() {
     const chatContainer = document.querySelector('.chat-container');
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Call this on page load
+// Appel au chargement de la page
 document.addEventListener('DOMContentLoaded', scrollToBottom);
 
-// Auto-refresh every 30 seconds
+// Actualisation automatique toutes les 30 secondes
 setInterval(function() {
     window.location.reload();
 }, 30000);
+
+// Animation fluide pour les nouveaux messages
+const chatMessages = document.querySelectorAll('.chat-message');
+chatMessages.forEach((message, index) => {
+    message.style.opacity = 0;
+    message.style.transform = 'translateY(10px)';
+    setTimeout(() => {
+        message.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        message.style.opacity = 1;
+        message.style.transform = 'translateY(0)';
+    }, 100 * index);
+});
 </script>
 
 {% endblock %}

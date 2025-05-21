@@ -2,215 +2,375 @@
 {% load static %}
 
 {% block body %}
-<div class="container-fluid">
-    <div class="row justify-content-center">
-        <div class="col-xl-8 col-lg-10">
-            <div id="content" class="p-4 p-md-5 pt-4">
-                <div class="card shadow-lg">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="m-0">
-                            <i class="fas fa-book mr-2"></i>Ajouter un nouveau livre
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <form action="{% url 'aabook' %}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
-                            {% csrf_token %}
-                            
-                            <div class="form-row mb-4">
-                                <div class="col-md-12 mb-3">
-                                    <label for="title" class="font-weight-bold">Titre du livre</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text bg-primary text-white">
-                                                <i class="fas fa-heading"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" id="title" name="title" placeholder="Titre du livre" required>
-                                        <div class="invalid-feedback">
-                                            Veuillez saisir le titre du livre.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header with back button -->
+        <div class="flex items-center mb-8">
+            <a href="{% url 'dashboard' %}" class="flex items-center text-gray-600 hover:text-primary transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                <span>Retour</span>
+            </a>
+            <h1 class="text-2xl font-bold text-gray-800 ml-4">Ajouter un nouveau livre</h1>
+        </div>
 
-                            <div class="form-row mb-4">
-                                <div class="col-md-6 mb-3">
-                                    <label for="author" class="font-weight-bold">Auteur</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text bg-primary text-white">
-                                                <i class="fas fa-user-edit"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" id="author" name="author" placeholder="Auteur" required>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-6 mb-3">
-                                    <label for="publisher" class="font-weight-bold">Éditeur</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text bg-primary text-white">
-                                                <i class="fas fa-building"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" id="publisher" name="publisher" placeholder="Éditeur" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-row mb-4">
-                                <div class="col-md-6 mb-3">
-                                    <label for="year" class="font-weight-bold">Année de publication</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text bg-primary text-white">
-                                                <i class="fas fa-calendar-alt"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" id="year" name="year" placeholder="Année de publication" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group mb-4">
-                                <label for="desc" class="font-weight-bold">Description</label>
-                                <textarea class="form-control" id="desc" name="desc" rows="4" placeholder="Description du livre" required></textarea>
-                            </div>
-
-                            <div class="form-row mb-4">
-                                <div class="col-md-6 mb-3">
-                                    <label for="cover" class="font-weight-bold">Couverture du livre</label>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="cover" name="cover" required>
-                                        <label class="custom-file-label" for="cover">Choisir une image...</label>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-6 mb-3">
-                                    <label for="pdf" class="font-weight-bold">Fichier PDF</label>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="pdf" name="pdf" required>
-                                        <label class="custom-file-label" for="pdf">Choisir un fichier PDF...</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group mt-5">
-                                <button type="submit" class="btn btn-primary btn-lg btn-block shadow-sm">
-                                    <i class="fas fa-plus-circle mr-2"></i>Ajouter le livre
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+        <!-- Form card -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <!-- Card header -->
+            <div class="bg-gradient-to-r from-primary to-primary-dark px-6 py-4">
+                <div class="flex items-center">
+                    <i class="fas fa-book-open text-white text-xl mr-3"></i>
+                    <h2 class="text-white text-lg font-semibold">Informations du livre</h2>
                 </div>
+            </div>
+
+            <!-- Form body -->
+            <div class="p-6 md:p-8">
+                <form action="{% url 'aabook_form' %}" method="POST" enctype="multipart/form-data" id="bookForm">
+                    {% csrf_token %}
+                    
+                    {% if messages %}
+                    <div class="space-y-3">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} px-4 py-3 rounded-lg flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} mr-2"></i>
+                                <span>{{ message }}</span>
+                            </div>
+                            <button type="button" class="text-lg" data-dismiss="alert">&times;</button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Book Title -->
+                    <div class="mb-6">
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Titre du livre *</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                <i class="fas fa-heading"></i>
+                            </div>
+                            <input type="text" id="title" name="title" class="pl-10 w-full rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary-light transition-all duration-200" placeholder="Titre du livre" required>
+                        </div>
+                        <p class="mt-1 text-sm text-red-600 hidden" id="title-error">Veuillez saisir le titre du livre.</p>
+                    </div>
+
+                    <!-- Author and Publisher -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="author" class="block text-sm font-medium text-gray-700 mb-1">Auteur *</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                    <i class="fas fa-user-edit"></i>
+                                </div>
+                                <input type="text" id="author" name="author" class="pl-10 w-full rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary-light transition-all duration-200" placeholder="Auteur" required>
+                            </div>
+                            <p class="mt-1 text-sm text-red-600 hidden" id="author-error">Veuillez saisir l'auteur du livre.</p>
+                        </div>
+
+                        <div>
+                            <label for="publisher" class="block text-sm font-medium text-gray-700 mb-1">Éditeur *</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <input type="text" id="publisher" name="publisher" class="pl-10 w-full rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary-light transition-all duration-200" placeholder="Éditeur" required>
+                            </div>
+                            <p class="mt-1 text-sm text-red-600 hidden" id="publisher-error">Veuillez saisir l'éditeur du livre.</p>
+                        </div>
+                    </div>
+
+                    <!-- Year and Category -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="year" class="block text-sm font-medium text-gray-700 mb-1">Année de publication *</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <input type="number" id="year" name="year" min="1900" max="{% now 'Y' %}" class="pl-10 w-full rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary-light transition-all duration-200" placeholder="Année" required>
+                            </div>
+                            <p class="mt-1 text-sm text-red-600 hidden" id="year-error">Veuillez saisir une année valide (1900-{% now 'Y' %}).</p>
+                        </div>
+
+                        <div>
+                            <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Catégorie *</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                    <i class="fas fa-tag"></i>
+                                </div>
+                                <select id="category" name="category" class="pl-10 w-full rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary-light transition-all duration-200" required>
+                                    <option value="" selected disabled>Sélectionnez une catégorie</option>
+                                    <option value="fiction">Fiction</option>
+                                    <option value="non-fiction">Non-fiction</option>
+                                    <option value="science">Science</option>
+                                    <option value="histoire">Histoire</option>
+                                    <option value="biographie">Biographie</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-500">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <p class="mt-1 text-sm text-red-600 hidden" id="category-error">Veuillez sélectionner une catégorie.</p>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-6">
+                        <label for="desc" class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+                        <textarea id="desc" name="desc" rows="4" class="w-full rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary-light transition-all duration-200" placeholder="Description du livre..." required></textarea>
+                        <p class="mt-1 text-sm text-red-600 hidden" id="desc-error">Veuillez saisir une description du livre.</p>
+                    </div>
+
+                    <!-- Files -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <!-- Cover -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Couverture du livre *</label>
+                            <div class="file-upload">
+                                <label for="cover" class="cursor-pointer">
+                                    <div id="cover-dropzone" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-all duration-200">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <i class="fas fa-image text-3xl text-gray-400 mb-2"></i>
+                                            <p class="text-sm text-gray-600">Glissez-déposez votre fichier ou</p>
+                                            <span class="mt-2 px-4 py-2 bg-primary-light text-primary rounded-md text-sm font-medium">Sélectionner une image</span>
+                                            <p class="mt-2 text-xs text-gray-500">JPG, PNG (max. 2MB)</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                <input type="file" id="cover" name="cover" class="hidden" accept="image/*" required>
+                                <div class="file-info mt-2 text-sm text-gray-600 hidden" id="cover-info">
+                                    <i class="fas fa-check-circle text-green-500 mr-1"></i>
+                                    <span class="file-name"></span>
+                                    <button type="button" class="ml-2 text-red-500 hover:text-red-700" id="cover-clear">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="mt-1 text-sm text-red-600 hidden" id="cover-error">Veuillez sélectionner une image de couverture.</p>
+                            </div>
+                        </div>
+
+                        <!-- PDF File -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Fichier PDF *</label>
+                            <div class="file-upload">
+                                <label for="pdf" class="cursor-pointer">
+                                    <div id="pdf-dropzone" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-all duration-200">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <i class="fas fa-file-pdf text-3xl text-gray-400 mb-2"></i>
+                                            <p class="text-sm text-gray-600">Glissez-déposez votre fichier ou</p>
+                                            <span class="mt-2 px-4 py-2 bg-primary-light text-primary rounded-md text-sm font-medium">Sélectionner un PDF</span>
+                                            <p class="mt-2 text-xs text-gray-500">PDF (max. 10MB)</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                <input type="file" id="pdf" name="pdf" class="hidden" accept=".pdf" required>
+                                <div class="file-info mt-2 text-sm text-gray-600 hidden" id="pdf-info">
+                                    <i class="fas fa-check-circle text-green-500 mr-1"></i>
+                                    <span class="file-name"></span>
+                                    <button type="button" class="ml-2 text-red-500 hover:text-red-700" id="pdf-clear">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="mt-1 text-sm text-red-600 hidden" id="pdf-error">Veuillez sélectionner un fichier PDF.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit button -->
+                    <div class="pt-4">
+                        <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary-darker text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center">
+                            <i class="fas fa-plus-circle mr-2"></i>
+                            <span>Ajouter le livre</span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Script pour afficher le nom des fichiers sélectionnés
-document.querySelector('.custom-file-input').addEventListener('change', function(e) {
-    var fileName = document.getElementById("cover").files[0].name;
-    var nextSibling = e.target.nextElementSibling;
-    nextSibling.innerText = fileName;
-});
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('bookForm');
+    const submitBtn = document.getElementById('submitBtn');
 
-document.querySelectorAll('.custom-file-input').forEach(function(input) {
-    input.addEventListener('change', function(e) {
-        var fileName = e.target.files[0].name;
-        var nextSibling = e.target.nextElementSibling;
-        nextSibling.innerText = fileName;
+    // File upload handling for cover
+    const coverInput = document.getElementById('cover');
+    const coverInfo = document.getElementById('cover-info');
+    const coverFileName = coverInfo.querySelector('.file-name');
+    const coverClearBtn = document.getElementById('cover-clear');
+    const coverDropzone = document.getElementById('cover-dropzone');
+    const coverError = document.getElementById('cover-error');
+
+    // File upload handling for PDF
+    const pdfInput = document.getElementById('pdf');
+    const pdfInfo = document.getElementById('pdf-info');
+    const pdfFileName = pdfInfo.querySelector('.file-name');
+    const pdfClearBtn = document.getElementById('pdf-clear');
+    const pdfDropzone = document.getElementById('pdf-dropzone');
+    const pdfError = document.getElementById('pdf-error');
+
+    // Setup file upload for cover
+    setupFileUpload(coverInput, coverInfo, coverFileName, coverClearBtn, coverDropzone, coverError);
+    
+    // Setup file upload for PDF
+    setupFileUpload(pdfInput, pdfInfo, pdfFileName, pdfClearBtn, pdfDropzone, pdfError);
+
+    function setupFileUpload(input, info, fileName, clearBtn, dropzone, errorElement) {
+        // Show file name when selected
+        input.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                fileName.textContent = this.files[0].name;
+                info.classList.remove('hidden');
+                dropzone.classList.add('border-primary', 'border-solid');
+                dropzone.classList.remove('border-dashed', 'border-gray-300');
+                errorElement.classList.add('hidden');
+            }
+        });
+        
+        // Clear selected file
+        clearBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            input.value = '';
+            info.classList.add('hidden');
+            dropzone.classList.remove('border-primary', 'border-solid');
+            dropzone.classList.add('border-dashed', 'border-gray-300');
+        });
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropzone.classList.add('border-primary', 'bg-primary-lightest');
+        }
+        
+        function unhighlight() {
+            dropzone.classList.remove('border-primary', 'bg-primary-lightest');
+        }
+        
+        dropzone.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            input.files = files;
+            const event = new Event('change');
+            input.dispatchEvent(event);
+        }
+    }
+
+    // Form validation
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Reset all errors
+        document.querySelectorAll('[id$="-error"]').forEach(el => {
+            el.classList.add('hidden');
+        });
+
+        let isValid = true;
+
+        // Validate required fields
+        const requiredFields = [
+            { id: 'title', error: 'title-error' },
+            { id: 'author', error: 'author-error' },
+            { id: 'publisher', error: 'publisher-error' },
+            { id: 'year', error: 'year-error' },
+            { id: 'category', error: 'category-error' },
+            { id: 'desc', error: 'desc-error' },
+            { id: 'cover', error: 'cover-error', isFile: true },
+            { id: 'pdf', error: 'pdf-error', isFile: true }
+        ];
+
+        requiredFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            const errorElement = document.getElementById(field.error);
+            
+            if (field.isFile) {
+                if (!element.files || element.files.length === 0) {
+                    errorElement.classList.remove('hidden');
+                    isValid = false;
+                }
+            } else {
+                if (!element.value || (element.hasAttribute('required') && element.value.trim() === '')) {
+                    errorElement.classList.remove('hidden');
+                    isValid = false;
+                }
+            }
+        });
+
+        // Special validation for year
+        const yearInput = document.getElementById('year');
+        if (yearInput.value) {
+            const year = parseInt(yearInput.value);
+            const currentYear = new Date().getFullYear();
+            if (year < 1900 || year > currentYear) {
+                document.getElementById('year-error').classList.remove('hidden');
+                isValid = false;
+            }
+        }
+
+        if (isValid) {
+            // If all valid, submit the form
+            form.submit();
+        } else {
+            // Scroll to the first error
+            const firstError = document.querySelector('[id$="-error"]:not(.hidden)');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
     });
 });
-
-// Validation du formulaire
-(function() {
-    'use strict';
-    window.addEventListener('load', function() {
-        var forms = document.getElementsByClassName('needs-validation');
-        var validation = Array.prototype.filter.call(forms, function(form) {
-            form.addEventListener('submit', function(event) {
-                if (form.checkValidity() === false) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
-    }, false);
-})();
 </script>
 
 <style>
-.card {
-    border: none;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.card-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.custom-file-label::after {
-    content: "Parcourir";
-    background-color: #e9ecef;
-    color: #495057;
-}
-
-.btn-primary {
-    background-color: #4e73df;
-    border-color: #4e73df;
+.alert {
     transition: all 0.3s ease;
 }
 
-.btn-primary:hover {
-    background-color: #2e59d9;
-    border-color: #2e59d9;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.alert-success {
+    background-color: #f0fdf4;
+    border-left: 4px solid #10b981;
+    color: #065f46;
 }
 
-.form-control, .custom-select {
-    border-radius: 0.35rem;
-    border: 1px solid #d1d3e2;
+.alert-error {
+    background-color: #fef2f2;
+    border-left: 4px solid #ef4444;
+    color: #991b1b;
 }
 
-.form-control:focus, .custom-select:focus {
-    border-color: #bac8f3;
-    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+.file-upload label div {
+    transition: all 0.2s ease;
 }
 
-.input-group-text {
-    background-color: #4e73df;
-    color: white;
-    border: none;
+.file-upload label:hover div {
+    border-color: #4e73df;
+    background-color: #f8fafc;
 }
 
-.invalid-feedback {
-    display: none;
-    width: 100%;
-    margin-top: 0.25rem;
-    font-size: 80%;
-    color: #e74a3b;
+.border-primary {
+    border-color: #4e73df;
 }
 
-.was-validated .form-control:invalid, 
-.was-validated .custom-select:invalid,
-.form-control.is-invalid, 
-.custom-select.is-invalid {
-    border-color: #e74a3b;
-}
-
-.was-validated .form-control:invalid ~ .invalid-feedback,
-.was-validated .form-control:invalid ~ .invalid-tooltip,
-.form-control.is-invalid ~ .invalid-feedback,
-.form-control.is-invalid ~ .invalid-tooltip,
-.custom-select.is-invalid ~ .invalid-feedback,
-.custom-select.is-invalid ~ .invalid-tooltip {
-    display: block;
+.bg-primary-lightest {
+    background-color: #f8fafc;
 }
 </style>
 

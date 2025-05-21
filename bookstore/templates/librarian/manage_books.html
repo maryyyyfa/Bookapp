@@ -1,72 +1,58 @@
-{% extends 'librarian/base.html' %} {% load static %} {% block title %}Manage
-Books | BookApp{% endblock %} {% block content %}
+{% extends 'librarian/base.html' %}
+{% load static %}
+
+{% block title %}Gestion des Livres | BookApp{% endblock %}
+
+{% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="bg-white shadow rounded-lg overflow-hidden">
-    <div class="px-4 py-5 sm:px-6 bg-primary">
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+    <!-- En-tête -->
+    <div class="px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-800">
       <div class="flex items-center">
-        <i class="fas fa-table text-white mr-2"></i>
-        <h3 class="text-lg font-medium text-white">Manage Books</h3>
+        <div class="p-2 bg-white rounded-lg mr-3">
+          <i class="fas fa-book text-blue-600 text-xl"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-white">Gestion des Livres</h3>
       </div>
     </div>
 
-    <div class="px-4 py-5 sm:p-6">
-      <!-- Messages -->
-      {% for message in messages %}
-      <div
-        class="mb-4 p-4 rounded-md {% if message.tags == 'success' %}bg-green-50 text-green-700{% elif message.tags == 'error' %}bg-red-50 text-red-700{% else %}bg-blue-50 text-blue-700{% endif %}"
-      >
-        <div class="flex">
-          <div class="flex-1">{{ message }}</div>
-          <button
-            type="button"
-            class="ml-4 text-gray-400 hover:text-gray-500"
-            onclick="this.parentElement.parentElement.remove()"
-          >
-            <i class="fas fa-times"></i>
-          </button>
+    <!-- Messages -->
+    {% for message in messages %}
+    <div class="mx-6 mt-4 p-4 rounded-lg border-l-4 {% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-700{% elif message.tags == 'error' %}bg-red-50 border-red-500 text-red-700{% else %}bg-blue-50 border-blue-500 text-blue-700{% endif %}">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+          <span>{{ message }}</span>
         </div>
+        <button type="button" class="text-gray-500 hover:text-gray-700" onclick="this.parentElement.parentElement.remove()">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
-      {% endfor %}
+    </div>
+    {% endfor %}
 
-      <!-- Books Table -->
-      <div class="overflow-x-auto">
+    <!-- Tableau des livres -->
+    <div class="px-6 py-6">
+      <div class="overflow-x-auto rounded-lg border border-gray-200">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 ID
               </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Cover
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Couverture
               </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Title
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Titre
               </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Author
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Auteur
               </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Status
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Statut
               </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -74,60 +60,46 @@ Books | BookApp{% endblock %} {% block content %}
           <tbody class="bg-white divide-y divide-gray-200">
             {% if books %}
               {% for book in books %}
-              <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <tr class="hover:bg-gray-50 transition-colors duration-150">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {{ book.id }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   {% if book.cover %}
-                  <img
-                    src="{{ book.cover.url }}"
-                    alt="{{ book.title }}"
-                    class="h-24 w-24 object-cover rounded"
-                  />
+                  <img src="{{ book.cover.url }}" alt="{{ book.title }}" 
+                       class="h-16 w-16 object-cover rounded-lg shadow-sm border border-gray-200">
                   {% else %}
-                  <div
-                    class="h-24 w-24 flex flex-col items-center justify-center bg-gray-100 rounded"
-                  >
-                    <i class="fas fa-image text-gray-400 text-xl"></i>
-                    <span class="text-xs text-gray-500 mt-1">No cover</span>
+                  <div class="h-16 w-16 flex flex-col items-center justify-center bg-gray-100 rounded-lg">
+                    <i class="fas fa-image text-gray-400"></i>
+                    <span class="text-xs text-gray-500 mt-1">Aucune</span>
                   </div>
                   {% endif %}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                   {{ book.title }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                   {{ book.author|default:"-" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if book.available %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}"
-                  >
-                    {% if book.available %}Available{% else %}Checked Out{% endif %}
+                  <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                    {% if book.available %}bg-green-100 text-green-800{% else %}bg-amber-100 text-amber-800{% endif %}">
+                    {% if book.available %}Disponible{% else %}Emprunté{% endif %}
                   </span>
                 </td>
-                <td
-                  class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium"
-                >
+                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                   <div class="flex justify-center space-x-2">
-                    <a
-                      href="{% url 'lvbook' book.pk %}"
-                      class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                    >
-                      View
+                    <a href="{% url 'lvbook' book.pk %}" 
+                       class="inline-flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
+                      <i class="fas fa-eye mr-1"></i> Voir
                     </a>
-                    <a
-                      href="{% url 'lebook' book.pk %}"
-                      class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-                    >
-                      Edit
+                    <a href="{% url 'lebook' book.pk %}" 
+                       class="inline-flex items-center px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
+                      <i class="fas fa-edit mr-1"></i> Modifier
                     </a>
-                    <a
-                      href="{% url 'ldbookk' book.pk %}"
-                      class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                    >
-                      Delete
+                    <a href="{% url 'ldbookk' book.pk %}" 
+                       class="inline-flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
+                      <i class="fas fa-trash-alt mr-1"></i> Supprimer
                     </a>
                   </div>
                 </td>
@@ -135,27 +107,66 @@ Books | BookApp{% endblock %} {% block content %}
               {% endfor %}
             {% else %}
               <tr>
-                <td
-                  colspan="6"
-                  class="px-6 py-4 text-center text-sm text-gray-500"
-                >
-                  No books available
+                <td colspan="6" class="px-6 py-8 text-center">
+                  <div class="flex flex-col items-center justify-center text-gray-500">
+                    <i class="fas fa-book-open text-4xl mb-3"></i>
+                    <p class="text-lg font-medium">Aucun livre disponible</p>
+                    <p class="text-sm mt-1">Commencez par ajouter un nouveau livre</p>
+                  </div>
                 </td>
               </tr>
             {% endif %}
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination -->
+      {% if is_paginated %}
+      <div class="mt-6 flex items-center justify-between">
+        <div class="text-sm text-gray-500">
+          Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}
+        </div>
+        <div class="flex space-x-2">
+          {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" 
+             class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+            Précédent
+          </a>
+          {% endif %}
+          
+          {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" 
+             class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+            Suivant
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>
-{% endblock %} {% block javascripts %} {{ block.super }}
+{% endblock %}
+
+{% block javascripts %}
+{{ block.super }}
 <script>
-  // Auto-dismiss alerts after 5 seconds
-  document.querySelectorAll(".alert").forEach((alert) => {
+  // Auto-dismiss alerts with fade out
+  document.querySelectorAll("[class*='bg-'].border-l-4").forEach((alert) => {
     setTimeout(() => {
-      alert.remove();
+      alert.style.transition = 'opacity 0.5s ease';
+      alert.style.opacity = '0';
+      setTimeout(() => alert.remove(), 500);
     }, 5000);
+  });
+
+  // Confirm before deletion
+  document.querySelectorAll('a[href*="delete"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      if (!confirm('Êtes-vous sûr de vouloir supprimer ce livre ?')) {
+        e.preventDefault();
+      }
+    });
   });
 </script>
 {% endblock %}

@@ -1,130 +1,216 @@
 {% extends 'librarian/base.html' %}
 {% load static %}
 
-{% block title %}{% if request.path == '/new' %}Add New Book{% else %}Edit {{ object.title }}{% endif %}{% endblock %}
+{% block title %}{% if request.path == '/new' %}Ajouter un Livre{% else %}Modifier {{ object.title }}{% endif %} | BookApp{% endblock %}
 
-{% block body %}
-<div class="container-fluid">
-    <div class="row justify-content-center">
-        <div class="col-xl-8 col-lg-10">
-            <div id="content-wrapper" class="mt-4">
-                <!-- Breadcrumb Navigation -->
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'lmbook' %}">Book List</a></li>
-                        <li class="breadcrumb-item active">
-                            {% if request.path == '/new' %}Add New Book{% else %}Edit {{ object.title }}{% endif %}
-                        </li>
-                    </ol>
-                </nav>
-
-                <!-- Main Card -->
-                <div class="card shadow-lg">
-                    <div class="card-header {% if request.path == '/new' %}bg-success{% else %}bg-primary{% endif %} text-white">
-                        <i class="fas {% if request.path == '/new' %}fa-plus-circle{% else %}fa-edit{% endif %}"></i>
-                        {% if request.path == '/new' %}Add New Book{% else %}Edit Book Details{% endif %}
-                    </div>
-                    
-                    <div class="card-body">
-                        <!-- System Messages -->
-                        {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        {% endfor %}
-
-                        <!-- Book Form -->
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            
-                            <div class="row">
-                                {% for field in form %}
-                                <div class="form-group col-md-{% if field.name == 'cover' or field.name == 'pdf' %}6{% else %}12{% endif %}">
-                                    {{ field.label_tag }}
-                                    {% if field.errors %}
-                                        {{ field|add_class:"form-control is-invalid" }}
-                                        <div class="invalid-feedback">
-                                            {{ field.errors|striptags }}
-                                        </div>
-                                    {% else %}
-                                        {{ field|add_class:"form-control" }}
-                                    {% endif %}
-                                    {% if field.help_text %}
-                                        <small class="form-text text-muted">{{ field.help_text }}</small>
-                                    {% endif %}
-                                </div>
-                                {% endfor %}
-                            </div>
-
-                            <!-- Form Actions -->
-                            <div class="form-actions mt-4 pt-3 border-top">
-                                <button type="submit" class="btn {% if request.path == '/new' %}btn-success{% else %}btn-primary{% endif %} mr-2">
-                                    <i class="fas {% if request.path == '/new' %}fa-save{% else %}fa-sync-alt{% endif %}"></i>
-                                    {% if request.path == '/new' %}Add Book{% else %}Update Book{% endif %}
-                                </button>
-                                <a href="{% url 'lmbook' %}" class="btn btn-secondary">
-                                    <i class="fas fa-arrow-left"></i> Back to List
-                                </a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <!-- En-tête -->
+    <div class="px-6 py-4 bg-gradient-to-r {% if request.path == '/new' %}from-green-600 to-green-700{% else %}from-blue-600 to-blue-700{% endif %}">
+      <div class="flex items-center">
+        <div class="p-3 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm mr-4">
+          <i class="fas {% if request.path == '/new' %}fa-plus-circle text-green-500{% else %}fa-edit text-blue-500{% endif %} text-xl"></i>
         </div>
+        <div>
+          <h1 class="text-2xl font-bold text-white">
+            {% if request.path == '/new' %}Ajouter un nouveau livre{% else %}Modifier "{{ object.title|truncatechars:30 }}"{% endif %}
+          </h1>
+          <p class="text-white text-opacity-90 mt-1">
+            {% if request.path == '/new' %}Remplissez les détails du nouveau livre{% else %}Mettez à jour les informations du livre{% endif %}
+          </p>
+        </div>
+      </div>
     </div>
-</div>
 
-<style>
-    .card {
-        border: none;
-        border-radius: 10px;
-    }
-    
-    .form-control {
-        border-radius: 5px;
-        padding: 10px 15px;
-    }
-    
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-    
-    .invalid-feedback {
-        display: block;
-    }
-    
-    .form-actions {
-        padding-top: 1.5rem;
-    }
-</style>
+    <!-- Messages -->
+    {% for message in messages %}
+    <div class="mx-6 mt-4 p-4 rounded-lg border-l-4 {% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-700{% elif message.tags == 'error' %}bg-red-50 border-red-500 text-red-700{% else %}bg-blue-50 border-blue-500 text-blue-700{% endif %}">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+          <span>{{ message }}</span>
+        </div>
+        <button type="button" class="text-gray-500 hover:text-gray-700" onclick="this.parentElement.parentElement.remove()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Formulaire -->
+    <div class="px-6 py-6">
+      <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Colonne gauche -->
+          <div class="space-y-6">
+            <!-- Titre -->
+            <div>
+              <label for="id_title" class="block text-sm font-medium text-gray-700 mb-1">Titre*</label>
+              <input type="text" name="title" id="id_title" required
+                     class="input-focus block w-full px-4 py-3 border border-gray-300 rounded-lg"
+                     value="{{ form.title.value|default:'' }}"
+                     placeholder="Titre du livre">
+              {% if form.title.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.title.errors|striptags }}</p>
+              {% endif %}
+            </div>
+
+            <!-- Auteur -->
+            <div>
+              <label for="id_author" class="block text-sm font-medium text-gray-700 mb-1">Auteur*</label>
+              <input type="text" name="author" id="id_author" required
+                     class="input-focus block w-full px-4 py-3 border border-gray-300 rounded-lg"
+                     value="{{ form.author.value|default:'' }}"
+                     placeholder="Nom de l'auteur">
+              {% if form.author.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.author.errors|striptags }}</p>
+              {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div>
+              <label for="id_desc" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea name="desc" id="id_desc" rows="4"
+                        class="input-focus block w-full px-4 py-3 border border-gray-300 rounded-lg"
+                        placeholder="Résumé du livre...">{{ form.desc.value|default:'' }}</textarea>
+              {% if form.desc.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.desc.errors|striptags }}</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Colonne droite -->
+          <div class="space-y-6">
+            <!-- Couverture -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Couverture</label>
+              <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                <div class="space-y-1 text-center">
+                  {% if form.cover.value %}
+                  <img src="{{ form.cover.value.url }}" id="cover-preview" class="h-48 mx-auto mb-3 rounded-lg object-contain border border-gray-200">
+                  {% else %}
+                  <i class="fas fa-image text-gray-400 text-3xl mb-3"></i>
+                  {% endif %}
+                  <div class="flex text-sm text-gray-600">
+                    <label for="id_cover" class="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-dark">
+                      <span>Télécharger une image</span>
+                      <input id="id_cover" name="cover" type="file" class="sr-only">
+                    </label>
+                    <p class="pl-1">ou glisser-déposer</p>
+                  </div>
+                  <p class="text-xs text-gray-500">PNG, JPG (Max. 5Mo)</p>
+                  {% if form.cover.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.cover.errors|striptags }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Fichier PDF -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Fichier PDF*</label>
+              <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                <div class="space-y-1 text-center">
+                  <i class="fas fa-file-pdf text-gray-400 text-3xl mb-3"></i>
+                  {% if form.pdf.value %}
+                  <p class="text-sm text-gray-900 font-medium">{{ form.pdf.value.name|truncatechars:20 }}</p>
+                  {% endif %}
+                  <div class="flex text-sm text-gray-600">
+                    <label for="id_pdf" class="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-dark">
+                      <span>Télécharger un PDF</span>
+                      <input id="id_pdf" name="pdf" type="file" {% if request.path == '/new' %}required{% endif %} class="sr-only">
+                    </label>
+                    <p class="pl-1">ou glisser-déposer</p>
+                  </div>
+                  <p class="text-xs text-gray-500">PDF uniquement (Max. 50Mo)</p>
+                  {% if form.pdf.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.pdf.errors|striptags }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Boutons -->
+        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+          <a href="{% url 'lmbook' %}" class="btn-secondary inline-flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i> Annuler
+          </a>
+          <button type="submit" class="btn-primary inline-flex items-center">
+            <i class="fas fa-save mr-2"></i> 
+            {% if request.path == '/new' %}Ajouter le livre{% else %}Enregistrer les modifications{% endif %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
-{% block scripts %}
+{% block javascripts %}
 {{ block.super }}
 <script>
-    // Initialize any special form field behaviors
-    $(document).ready(function() {
-        // Example: Initialize date picker for date fields
-        $('input[type="date"]').datepicker({
-            format: 'yyyy-mm-dd',
-            autoclose: true
-        });
-        
-        // Preview cover image when selected
-        $('#id_cover').change(function(e) {
-            if (this.files && this.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    $('.cover-preview').html(
-                        '<img src="' + e.target.result + '" class="img-thumbnail mt-2" style="max-height: 200px;">'
-                    );
-                }
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
+  // Prévisualisation de la couverture
+  document.getElementById('id_cover').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        let preview = document.getElementById('cover-preview');
+        if (!preview) {
+          const container = document.querySelector('.fa-image').parentElement;
+          container.innerHTML = `
+            <img src="${e.target.result}" 
+                 id="cover-preview" 
+                 class="h-48 mx-auto mb-3 rounded-lg object-contain border border-gray-200">
+            ${container.innerHTML}
+          `;
+        } else {
+          preview.src = e.target.result;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Affichage du nom du fichier PDF
+  document.getElementById('id_pdf').addEventListener('change', function(e) {
+    const fileName = e.target.files[0]?.name || 'Aucun fichier sélectionné';
+    const pdfContainer = document.querySelector('.fa-file-pdf').parentElement;
+    const existingName = pdfContainer.querySelector('p.text-gray-900');
+    
+    if (existingName) {
+      existingName.textContent = fileName;
+    } else {
+      const nameElement = document.createElement('p');
+      nameElement.className = 'text-sm text-gray-900 font-medium';
+      nameElement.textContent = fileName;
+      pdfContainer.insertBefore(nameElement, pdfContainer.querySelector('.flex.text-sm'));
+    }
+  });
+
+  // Validation des champs requis
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const requiredFields = this.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+      if (!field.value.trim()) {
+        field.classList.add('border-red-500');
+        isValid = false;
+      } else {
+        field.classList.remove('border-red-500');
+      }
     });
+    
+    if (!isValid) {
+      e.preventDefault();
+      alert('Veuillez remplir tous les champs obligatoires');
+    }
+  });
 </script>
 {% endblock %}

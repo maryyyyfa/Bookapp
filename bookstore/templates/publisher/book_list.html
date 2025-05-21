@@ -1,115 +1,167 @@
-{% extends 'publisher/base.html' %} {% load static %} {% block title %}Book
-Library | BookApp{% endblock %} {% block content %}
-<div class="container mx-auto px-4 py-8">
+{% extends 'publisher/base.html' %}
+{% load static %}
+{% block title %}Bibliothèque | Librairie+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
   <div class="max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-800">Book Library</h1>
+    <!-- Header with gradient -->
+    <div class="mb-10 text-center">
+      <div class="inline-flex items-center justify-center mb-4">
+        <svg class="w-10 h-10 text-primary" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+        </svg>
+        <h1 class="ml-3 text-4xl font-serif font-bold text-dark">Bibliothèque</h1>
+      </div>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">Explorez notre collection soigneusement sélectionnée d'ouvrages littéraires</p>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+      <div class="relative w-full sm:w-64">
+        <input
+          type="text"
+          placeholder="Rechercher un livre..."
+          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+        >
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="fas fa-search text-gray-400"></i>
+        </div>
+      </div>
+      
       <a
         href="{% url 'uabook_form' %}"
-        class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center"
+        class="group relative w-full sm:w-auto flex justify-center items-center px-6 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-300 shadow-button hover:shadow-md"
       >
-        <i class="fas fa-plus mr-2"></i> Add New Book
+        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+          <i class="fas fa-plus text-gray-200 group-hover:text-white"></i>
+        </span>
+        Ajouter un livre
       </a>
     </div>
 
     <!-- Book Grid -->
-    <div
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
-    >
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
       {% for book in books %}
-      <div
-        class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
-      >
+      <div class="bg-white rounded-xl shadow-card overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
         <!-- Book Cover -->
-        <div class="h-48 bg-gray-200 flex items-center justify-center">
+        <div class="h-64 bg-gray-100 flex items-center justify-center relative">
           {% if book.cover %}
           <img
             src="{{ book.cover.url }}"
             alt="{{ book.title }}"
-            class="h-full w-auto object-contain"
-          />
+            class="h-full w-full object-cover"
+          >
           {% else %}
-          <div class="flex items-center justify-center">
-            <i class="fas fa-book text-3xl text-gray-400"></i>
-          </div>
+          <div class="absolute inset-0 bg-gradient-to-br from-secondary to-secondary-dark opacity-20"></div>
+          <i class="fas fa-book-open text-5xl text-gray-400"></i>
           {% endif %}
+          <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+            <span class="text-xs font-medium text-white bg-primary rounded-full px-2 py-1">
+              {{ book.published_date|date:"Y"|default:"N/A" }}
+            </span>
+          </div>
         </div>
 
         <!-- Book Info -->
-        <div class="p-4">
-          <h3 class="text-base font-semibold text-gray-800 mb-2 truncate">
+        <div class="p-5">
+          <h3 class="text-lg font-bold text-dark mb-1 truncate" title="{{ book.title }}">
             {{ book.title }}
           </h3>
-          <p class="text-sm text-gray-600 mb-2 truncate">
-            by {{ book.author }}
+          <p class="text-sm text-gray-600 mb-3 truncate" title="par {{ book.author }}">
+            par {{ book.author }}
           </p>
-          <p class="text-sm text-gray-500 mb-3">
-            {{ book.published_date|date:"Y" }}
-          </p>
-
+          
           <!-- Action Buttons -->
-          <div class="flex justify-between">
+          <div class="flex justify-between items-center border-t border-gray-100 pt-3">
             {% if book.pdf_file %}
             <a
               href="{{ book.pdf_file.url }}"
-              class="text-primary hover:text-primary/80"
-              title="Download PDF"
+              class="text-primary hover:text-primary-dark transition-colors flex items-center text-sm font-medium"
               download
             >
-              <i class="fas fa-eye text-lg"></i>
+              <i class="fas fa-download mr-2"></i> PDF
             </a>
             {% else %}
-            <span
-              class="text-gray-400 cursor-not-allowed"
-              title="No PDF available"
-            >
-              <i class="fas fa-eye text-lg"></i>
+            <span class="text-gray-400 text-sm flex items-center">
+              <i class="fas fa-times-circle mr-2"></i> Non disponible
             </span>
             {% endif %}
+            
+            <div class="flex space-x-2">
+              <a href="#" class="text-gray-500 hover:text-primary transition-colors">
+                <i class="fas fa-eye"></i>
+              </a>
+              <a href="#" class="text-gray-500 hover:text-blue-600 transition-colors">
+                <i class="fas fa-edit"></i>
+              </a>
+              <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">
+                <i class="fas fa-trash-alt"></i>
+              </a>
+            </div>
           </div>
         </div>
       </div>
       {% empty %}
-      <div
-        class="col-span-full text-center py-12 bg-white rounded-lg shadow-sm"
-      >
-        <i class="fas fa-books text-4xl text-gray-400 mb-3"></i>
-        <h4 class="text-xl font-medium text-gray-600 mb-2">
-          No Books Available
+      <div class="col-span-full text-center py-16 bg-white rounded-xl shadow-card">
+        <div class="mx-auto w-24 h-24 bg-secondary-light rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-book-open text-3xl text-primary"></i>
+        </div>
+        <h4 class="text-2xl font-serif font-bold text-dark mb-2">
+          Aucun livre disponible
         </h4>
-        <p class="text-gray-500">
-          Start by adding your first book to the library.
+        <p class="text-gray-600 mb-6 max-w-md mx-auto">
+          Votre bibliothèque est vide. Commencez par ajouter votre premier ouvrage.
         </p>
+        <a
+          href="{% url 'uabook_form' %}"
+          class="group relative inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-300 shadow-button hover:shadow-md"
+        >
+          <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+            <i class="fas fa-plus text-gray-200 group-hover:text-white"></i>
+          </span>
+          Ajouter un livre
+        </a>
       </div>
       {% endfor %}
     </div>
 
     <!-- Pagination -->
     {% if is_paginated %}
-    <div class="flex justify-center mt-8">
-      <nav class="inline-flex rounded-md shadow">
+    <div class="flex justify-center mt-12">
+      <nav class="inline-flex rounded-md shadow-sm">
         {% if page_obj.has_previous %}
         <a
           href="?page={{ page_obj.previous_page_number }}"
-          class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+          class="px-4 py-2 rounded-l-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
         >
-          Previous
+          <i class="fas fa-chevron-left mr-2"></i> Précédent
         </a>
         {% endif %}
 
-        <span
-          class="px-3 py-2 border border-gray-300 bg-primary text-white text-sm font-medium"
-        >
-          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-        </span>
+        <div class="flex">
+          {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <span class="px-4 py-2 border-t border-b border-primary bg-primary text-white text-sm font-medium">
+              {{ num }}
+            </span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a
+              href="?page={{ num }}"
+              class="px-4 py-2 border-t border-b border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              {{ num }}
+            </a>
+            {% endif %}
+          {% endfor %}
+        </div>
 
         {% if page_obj.has_next %}
         <a
           href="?page={{ page_obj.next_page_number }}"
-          class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+          class="px-4 py-2 rounded-r-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
         >
-          Next
+          Suivant <i class="fas fa-chevron-right ml-2"></i>
         </a>
         {% endif %}
       </nav>
@@ -117,4 +169,13 @@ Library | BookApp{% endblock %} {% block content %}
     {% endif %}
   </div>
 </div>
+
+<style>
+  .shadow-card {
+    box-shadow: 0 4px 6px -1px rgba(78, 115, 223, 0.1), 0 2px 4px -1px rgba(78, 115, 223, 0.06);
+  }
+  .shadow-button {
+    box-shadow: 0 4px 6px rgba(78, 115, 223, 0.3);
+  }
+</style>
 {% endblock %}
